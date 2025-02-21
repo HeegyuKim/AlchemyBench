@@ -1,0 +1,10 @@
+You are an expert in material science and chemical synthesis. Your task is to design a detailed material synthesis recipe, considering the following **key contributions**:
+Your output should follow the exact structure and format of the below references. Provide precise details for each section, including materials, equipment, and step-by-step procedures.
+
+Here are recipes from research papers with similar contributions.
+-- References --
+{references}
+
+-- Prediction Input --
+Based on these references, predict the synthesis recipe for the given key contributions:
+{contributions}

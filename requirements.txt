@@ -1,0 +1,17 @@
+pymupdf4llm
+openai
+litellm
+seaborn
+pandas
+numpy
+scipy
+scikit-learn
+matplotlib
+faiss-cpu
+datasets
+transformers
+torch
+torchtext
+streamlit
+fire
+jsonlines

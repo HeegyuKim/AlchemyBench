@@ -1,0 +1,56 @@
+You are an expert in material science and chemical synthesis. Your task is to design a detailed material synthesis recipe, considering the following **key contributions**:
+Your output should follow the exact structure and format of the below example. Provide precise details for each section, including materials, equipment, and step-by-step procedures.
+
+-- Example Input --
+## Key Contributions
+- **Novel materials or compounds**: Nanoceria-based sorbents for enhanced sorption of low specific activity [99]Mo.
+  
+- **Unique synthesis methods**: Development of CeO2 nanoparticles using wet chemical precipitation and hydrothermal approaches.
+  
+- **Specific applications or domains**: Potential application in the development of [99]Mo/[99m]Tc generators for nuclear medicine. 
+
+-- Example Output --
+## Materials
+- **Precursor Materials**:
+  - Cerium nitrate hexahydrate (Ce(NO3)3·6H2O): 2 g.
+  - Sodium hydroxide: 0.4 M solution.
+  
+- **Solvents**:
+  - Milli-Q water.
+  - Ethanol absolute (1:4 v/v with water for chemical precipitation, 4:1 v/v for hydrothermal method).
+  
+- **Reagents**:
+  - Nitric acid (HNO3).
+  - 1 M NaOH solution for adjusting pH.
+
+- **Specifications**:
+  - All chemicals of analytical grade from Merck, Darmstadt, Germany.
+
+## Synthesis Equipment
+
+- **Centrifuge**: Used at 4000 rpm for 15 minutes.
+
+- **Drying Oven**: Temperature range of 50–70 °C for 12 hours.
+  
+- **Teflon-lined Stainless Steel Autoclave**: Used for hydrothermal synthesis at 150 °C for 12 hours.
+
+## Synthesis Procedure
+
+### Wet Chemical Precipitation
+
+1. Dissolve 2 g of Ce(NO3)3·6H2O in a mixture of Milli-Q water and ethanol (1:4 v/v).
+2. Add the solution drop-wise to a 0.4 M sodium hydroxide solution under continuous stirring, maintaining pH ~11.
+3. Stir until a yellow suspension forms (~30 min). 
+4. Wash the precipitate with de-ionized water and ethanol; centrifuge and dry at 50–70 °C for 12 h. 
+5. Denote the sample as CP (Chemical Precipitation).
+
+### Hydrothermal Modification
+
+1. Transfer the precipitated NPs into a Teflon-lined stainless-steel autoclave.
+2. Seal and maintain at 150 °C for 12 hours.
+3. Wash, centrifuge, and dry the precipitate at 70 °C for 12 h.
+4. Denote the sample as HT (Hydrothermal Treatment).
+
+-- Prediction Input --
+Now, predict the synthesis recipe for the given key contributions:
+{contributions}
