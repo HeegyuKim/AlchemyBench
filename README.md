@@ -21,6 +21,22 @@ Use python=3.11 and install the required packages using the following command:
 pip install -r requirements.txt
 ```
 
+### Streamlit Demo
+Try our [online streamlit demo](https://materials-recipe.streamlit.app/) or run in your evironment to predict the synthesis recipe.
+```
+export OPENAI_API_KEY= # your api key here
+streamlit run demo.py
+```
+<details>
+<summary>Screenshots</summary>
+<div markdown="1">
+
+<img src='img/screenshot1.png'/>
+<img src='img/screenshot2.png'/>
+
+</div>
+</details>
+
 ### Repository Structure
 ```
 data_collection/
