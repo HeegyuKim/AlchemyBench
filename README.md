@@ -8,7 +8,7 @@ AlchemyBench is a benchmark designed to evaluate the performance of large langua
 2. Tasks such as raw materials prediction, synthesis procedure generation, and characterization outcome forecasting.
 3. An LLM-as-a-Judge framework for automated evaluation.
 
-For more details, refer to our paper: [Link to the paper](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/28612816/0f976fb3-1989-4117-97fc-8030ec2445de/2025_MaterialBench.pdf).
+For more details, refer to our paper: [paper](https://arxiv.org/abs/2502.16457), [dataset](https://huggingface.co/datasets/iknow-lab/open-materials-guide-2024)
 
 ## Features
 - **Dataset Processing**: Scripts to preprocess the Open Materials Guide (OMG) dataset.
