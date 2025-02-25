@@ -34,10 +34,21 @@ experiment/
 - Code for evaluating the performance of the model using LLM-as-a-Judge (evaluate.py)
 ```
 
-## Contributing
-We welcome contributions! Please refer to the `CONTRIBUTING.md` file for guidelines on how to contribute to this project.
+
+If you use our work in your research, please cite our paper:
+```
+@misc{kim2025fullyautomatedmaterialsdiscoverylargescale,
+      title={Towards Fully-Automated Materials Discovery via Large-Scale Synthesis Dataset and Expert-Level LLM-as-a-Judge}, 
+      author={Heegyu Kim and Taeyang Jeon and Seungtaek Choi and Jihoon Hong and Dongwon Jeon and Sungbum Cho and Ga-Yeon Baek and Kyung-Won Kwak and Dong-Hee Lee and Sun-Jin Choi and Jisu Bae and Chihoon Lee and Yunseo Kim and Jinsung Park and Hyunsouk Cho},
+      year={2025},
+      eprint={2502.16457},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2502.16457}, 
+}
+```
+
 
 ## License
 This project is licensed under the MIT License. See the `LICENSE` file for details.
-
 
