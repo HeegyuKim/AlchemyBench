@@ -24,8 +24,8 @@ Ground Truth Recipe:
 
 class RecipeJudge(RecipePredictor):
 
-    def __init__(self, model="gpt-4o-mini", batch_size=1, max_tokens=4096, max_completion_tokens=16384, temperature=0, prompt_filename = "prompts/prediction_0209.txt"):
-        super().__init__(model, batch_size, max_tokens, max_completion_tokens, temperature, prompt_filename)
+    def __init__(self, model="gpt-4o-mini", batch_size=1, max_tokens=4096, max_completion_tokens=16384, temperature=0, api_key=None, prompt_filename = "prompts/prediction_0209.txt"):
+        super().__init__(model, batch_size, max_tokens, max_completion_tokens, temperature, api_key, prompt_filename)
         self.job_description = f"material LLM judge job w/ {model}"
 
     def build_prompt(self, item):

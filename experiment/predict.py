@@ -19,6 +19,7 @@ class RecipePredictor:
                  max_tokens=4096,
                  max_completion_tokens=16384,
                  temperature=0.0,
+                 api_key=None,
                  prompt_filename: str="prompts/prediction.txt",
                  ):
         self.model = model
@@ -26,7 +27,7 @@ class RecipePredictor:
         self.batch_size = batch_size
         self.max_tokens = max_tokens
         self.temperature = temperature
-        self.client = openai.OpenAI()
+        self.client = openai.OpenAI(api_key=api_key)
         self.prediction_prompt = open(prompt_filename).read()
         self.job_description = f"material prediction job w/ {model}"
         self.max_completion_tokens = max_completion_tokens  
@@ -159,9 +160,9 @@ class RecipePredictor:
 
 class RAGRecipePredictor(RecipePredictor):
 
-    def __init__(self, model="gpt-4o-mini", batch_size=1, max_tokens=4096, max_completion_tokens=16384, temperature=0, prompt_filename = "prompts/prediction_0209.txt",
+    def __init__(self, model="gpt-4o-mini", batch_size=1, max_tokens=4096, max_completion_tokens=16384, temperature=0, api_key=None, prompt_filename = "prompts/prediction_0209.txt",
                  rag_topk: int = 5, retrieval_split: str = "train"):
-        super().__init__(model, batch_size, max_tokens, max_completion_tokens, temperature, prompt_filename)
+        super().__init__(model, batch_size, max_tokens, max_completion_tokens, temperature, api_key, prompt_filename)
         self.job_description = f"RAG material prediction job w/ {model}"
         if retrieval_split == "all":
             retrieval_set = load_dataset("iknow-lab/open-materials-guide-0210-embeddings")

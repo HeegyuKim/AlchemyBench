@@ -2,6 +2,7 @@ import streamlit as st
 import os
 from experiment.predict import RAGRecipePredictor, RecipePredictor
 from litellm import embedding
+import litellm
 
 st.title("Materials Synthesis Recipe Recommender")
 st.write("This is a demo of the Materials Synthesis Recipe Recommender. Please enter the desired material properties and click on the 'Recommend' button to get a list of materials synthesis recipes that can be used to synthesize materials with the desired properties.")
@@ -11,6 +12,14 @@ st.sidebar.title("Input Parameters")
 
 openai_key = st.session_state.get("openai_key", os.environ.get("OPENAI_API_KEY", "empty"))
 openai_api_key = st.sidebar.text_input("OpenAI API Key", openai_key, type="password")
+update_key = st.sidebar.button("Update Key")
+if update_key:
+    st.session_state.openai_key = openai_api_key
+    litellm.openai_key = openai_api_key
+    litellm.api_key = openai_api_key
+    st.toast("API Key updated successfully")
+    st.rerun()
+
 material_name = st.sidebar.text_input("Material Name", "ZnO")
 synthesis_technique = st.sidebar.text_input("Synthesis Technique", "Solution-based")
 application = st.sidebar.text_input("Application", "Photocatalysis")
@@ -41,8 +50,8 @@ def get_embedding(contributions):
 
 @st.cache_resource
 def get_predictors():
-    rag_predictor = RAGRecipePredictor(model=model, prompt_filename="experiment/prompts/rag.txt", rag_topk=top_k, retrieval_split="all")
-    base_predictor = RecipePredictor(model=model, prompt_filename="experiment/prompts/prediction.txt")
+    rag_predictor = RAGRecipePredictor(model=model, prompt_filename="experiment/prompts/rag.txt", rag_topk=top_k, retrieval_split="all", api_key=openai_api_key)
+    base_predictor = RecipePredictor(model=model, prompt_filename="experiment/prompts/prediction.txt", api_key=openai_api_key)
     return rag_predictor, base_predictor
 
 rag_predictor, base_predictor = get_predictors()
