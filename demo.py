@@ -9,8 +9,8 @@ st.write("This is a demo of the Materials Synthesis Recipe Recommender. Please e
 # Input fields
 st.sidebar.title("Input Parameters")
 
-openai_api_key = st.sidebar.text_input("OpenAI API Key", os.environ.get("OPENAI_API_KEY", "empty"), type="password")
-os.environ["OPENAI_API_KEY"] = openai_api_key
+openai_key = st.session_state.get("openai_key", os.environ.get("OPENAI_API_KEY", "empty"))
+openai_api_key = st.sidebar.text_input("OpenAI API Key", openai_key, type="password")
 material_name = st.sidebar.text_input("Material Name", "ZnO")
 synthesis_technique = st.sidebar.text_input("Synthesis Technique", "Solution-based")
 application = st.sidebar.text_input("Application", "Photocatalysis")
