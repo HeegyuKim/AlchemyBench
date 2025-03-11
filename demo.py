@@ -79,7 +79,7 @@ def predict_recipe(material_name, synthesis_technique, application, other_contst
 
     if files:
         with st.spinner("Extracting recipes from PDFs..."):
-            references = pdf_bytelist_to_recipes([file.read() for file in files], model=model)
+            references = pdf_bytelist_to_recipes([file.read() for file in files])
     else:
         references = None
     
