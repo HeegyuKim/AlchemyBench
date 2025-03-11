@@ -16,3 +16,4 @@ streamlit
 fire
 jsonlines
 streamlit
+pymupdf4llm

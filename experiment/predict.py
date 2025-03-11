@@ -170,7 +170,7 @@ class RAGRecipePredictor(RecipePredictor):
         else:
             self.retrieval_set = load_dataset("iknow-lab/open-materials-guide-0210-embeddings", split="train")
         self.rag_topk = rag_topk
-        assert self.rag_topk > 0, "RAG topk must be greater than 0"
+        # assert self.rag_topk > 0, "RAG topk must be greater than 0"
 
         faiss_name = f"faiss_index_{retrieval_split}.faiss"
         if os.path.exists(faiss_name):
@@ -178,6 +178,8 @@ class RAGRecipePredictor(RecipePredictor):
         else:
             self.retrieval_set.add_faiss_index("contributions_embedding", "contributions_embedding")
             self.retrieval_set.save_faiss_index("contributions_embedding", faiss_name)
+
+        self.base_references = None
 
     def search(self, contribution, k=5, return_rows=False):
         query_embedding = np.array(contribution)
@@ -194,7 +196,15 @@ class RAGRecipePredictor(RecipePredictor):
     
     def build_prompt(self, item):
         contributions, recipe, embeddings = item["contribution"], item["recipe"], item["contributions_embedding"]
-        retrieval_prompts = self.search(embeddings, k=self.rag_topk)
+        if self.rag_topk > 0:
+            retrieval_prompts = self.search(embeddings, k=self.rag_topk)
+        else:
+            retrieval_prompts = ""
+
+        if self.base_references:
+            references = [f"# User Provided Reference {i + 1}:\n{recipe}" for i, recipe in enumerate(self.base_references)]
+            retrieval_prompts = "\n\n".join(references) + "\n\n" + retrieval_prompts
+
         prompt = self.prediction_prompt.format(contributions=contributions, references=retrieval_prompts)
         return [
             {

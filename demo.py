@@ -3,6 +3,7 @@ import os
 from experiment.predict import RAGRecipePredictor, RecipePredictor
 from litellm import embedding
 import litellm
+from pdf2recipe import pdf_bytelist_to_recipes
 
 st.title("Materials Synthesis Recipe Recommender")
 st.write("This is a demo of the Materials Synthesis Recipe Recommender. Please enter the desired material properties and click on the 'Recommend' button to get a list of materials synthesis recipes that can be used to synthesize materials with the desired properties.")
@@ -20,15 +21,21 @@ if update_key:
     st.toast("API Key updated successfully")
     st.rerun()
 
-material_name = st.sidebar.text_input("Material Name", "ZnO")
-synthesis_technique = st.sidebar.text_input("Synthesis Technique", "Solution-based")
-application = st.sidebar.text_input("Application", "Photocatalysis")
-other_contstraints = st.sidebar.text_area("Other Constraints", "")
+with st.sidebar, st.form("recipe_form"):
+    material_name = st.text_input("Material Name", "ZnO")
+    synthesis_technique = st.text_input("Synthesis Technique", "Solution-based")
+    application = st.text_input("Application", "Photocatalysis")
+    other_contstraints = st.text_area("Other Constraints", "")
 
-top_k = st.sidebar.slider("Number of Retrievals", 1, 10, 5)
-model = st.sidebar.selectbox("Model", ["gpt-4o-mini", "o3-mini-high", "o1", "gpt-4o-2024-11-20"])
+    top_k = st.slider("Number of Retrievals", 0, 10, 5)
+    model = st.selectbox("Model", ["gpt-4o-mini", "o3-mini-high", "o1", "gpt-4o-2024-11-20"])
 
-generate_btn = st.sidebar.button("Recommend")
+    files = st.file_uploader("Upload PDF Files", type=["pdf"], accept_multiple_files=True)
+    if files:
+        for file in files:
+            st.write(file.name)
+
+    generate_btn = st.form_submit_button("Recommend")
 
 if not generate_btn:
     st.stop()
@@ -56,19 +63,28 @@ def get_predictors():
 
 rag_predictor, base_predictor = get_predictors()
 
-def predict_recipe(material_name, synthesis_technique, application, other_contstraints, top_k, model, use_rag):
+def predict_recipe(material_name, synthesis_technique, application, other_contstraints, top_k, model, use_rag, files=None):
     contributions = PREDICTION_PROMPT.format(
         material_name=material_name,
         synthesis_technique=synthesis_technique,
         application=application,
     )
 
-    if use_rag:
+    if use_rag or files:
         predictor = rag_predictor
         emb = get_embedding(contributions)
     else:
         predictor = base_predictor
         emb = None
+
+    if files:
+        with st.spinner("Extracting recipes from PDFs..."):
+            references = pdf_bytelist_to_recipes([file.read() for file in files], model=model)
+    else:
+        references = None
+    
+    predictor.base_references = references
+    predictor.model = model
 
     if other_contstraints:
         contributions += f"\n\n## Other Constraints\n{other_contstraints}"
@@ -83,9 +99,12 @@ def predict_recipe(material_name, synthesis_technique, application, other_contst
     for _, output in predictor.predict(batch):
         pass
 
-    if use_rag:
-        references = predictor.search(emb, k=top_k, return_rows=True)
+    if use_rag or files:
         ref_outputs = []
+        if references:
+            ref_outputs.extend(references)
+
+        references = predictor.search(emb, k=top_k, return_rows=True)
 
         for i in range(top_k):
             rid, contribution, recipe = references['id'][i], references['contribution'][i], references['recipe'][i]
@@ -101,7 +120,7 @@ def predict_recipe(material_name, synthesis_technique, application, other_contst
     return output, references
     
 with st.spinner("Generating recipes..."):
-    recipe, references = predict_recipe(material_name, synthesis_technique, application, other_contstraints, top_k, model, use_rag)
+    recipe, references = predict_recipe(material_name, synthesis_technique, application, other_contstraints, top_k, model, use_rag, files=files)
 
 st.header("Predicted Recipes")
 st.markdown(recipe)
