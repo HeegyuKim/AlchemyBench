@@ -6,8 +6,6 @@ import litellm
 from pdf2recipe import pdf_bytelist_to_recipes
 
 st.title("Materials Synthesis Recipe Recommender")
-st.write("This is a demo of the Materials Synthesis Recipe Recommender. Please enter the desired material properties and click on the 'Recommend' button to get a list of materials synthesis recipes that can be used to synthesize materials with the desired properties.")
-
 # Input fields
 st.sidebar.title("Input Parameters")
 
@@ -38,6 +36,7 @@ with st.sidebar, st.form("recipe_form"):
     generate_btn = st.form_submit_button("Recommend")
 
 if not generate_btn:
+    st.write("This is a demo of the Materials Synthesis Recipe Recommender. Please enter the desired material properties and click on the 'Recommend' button to get a list of materials synthesis recipes that can be used to synthesize materials with the desired properties.")
     st.stop()
 
 use_rag = top_k >= 1
