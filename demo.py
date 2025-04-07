@@ -177,13 +177,19 @@ if prompt:
     })
 
     with st.spinner("Generating response..."):
-        response = completion(
-            model=model,
-            messages=st.session_state.messages,
-            max_tokens=4096,
-            api_key=openai_api_key,
-        )
-        
+        if model.startswith("o1") or model.startswith("o3"):
+            response = completion(
+                model=model,
+                messages=st.session_state.messages,
+                max_completion_tokens=16384,
+            )
+        else:
+            response = completion(
+                model=model,
+                messages=st.session_state.messages,
+                max_tokens=4096,
+            )
+
     with st.chat_message("assistant"):
         st.markdown(response["choices"][0]["message"]["content"])
     
