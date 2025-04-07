@@ -1,9 +1,21 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 import streamlit as st
 import os
 from experiment.predict import RAGRecipePredictor, RecipePredictor
 from litellm import embedding
 import litellm
 from pdf2recipe import pdf_bytelist_to_recipes
+from litellm import completion
+
+st.set_page_config(
+    page_title="Materials Synthesis Recipe Recommender",
+    page_icon=":microscope:",
+    layout="wide",
+)
 
 st.title("Materials Synthesis Recipe Recommender")
 # Input fields
@@ -35,7 +47,7 @@ with st.sidebar, st.form("recipe_form"):
 
     generate_btn = st.form_submit_button("Recommend")
 
-if not generate_btn:
+if not generate_btn and not hasattr(st.session_state, "messages"):
     st.write("This is a demo of the Materials Synthesis Recipe Recommender. Please enter the desired material properties and click on the 'Recommend' button to get a list of materials synthesis recipes that can be used to synthesize materials with the desired properties.")
     st.stop()
 
@@ -116,18 +128,66 @@ def predict_recipe(material_name, synthesis_technique, application, other_contst
     else:
         references = None
     
-    return output, references
+    prompt = predictor.build_prompt(batch[0])[0]['content']
+
+    return output, references, prompt
     
-with st.spinner("Generating recipes..."):
-    recipe, references = predict_recipe(material_name, synthesis_technique, application, other_contstraints, top_k, model, use_rag, files=files)
+if not hasattr(st.session_state, "messages"):
+    st.session_state.messages = []
 
-st.header("Predicted Recipes")
-st.markdown(recipe)
-st.write("\n\n")
+    with st.spinner("Generating recipes..."):
+        recipe, references, user_prompt = predict_recipe(material_name, synthesis_technique, application, other_contstraints, top_k, model, use_rag, files=files)
+        st.session_state.references = references
+        st.session_state.messages.append({
+            "role": "user",
+            "content": user_prompt,
+        })
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": recipe
+        })
+else:
+    recipe, references, user_prompt = st.session_state.messages[1]["content"], st.session_state.references, st.session_state.messages[0]["content"]
 
-if use_rag:
-    st.header("References")
-    for i, ref in enumerate(references):
-        with st.expander(f"Reference {i + 1}", expanded=False):
-            st.markdown(ref)
 
+with st.chat_message("assistant"):
+    st.header("Predicted Recipes")
+    st.markdown(recipe)
+    st.write("\n\n")
+
+    if use_rag:
+        st.header("References")
+        for i, ref in enumerate(references):
+            with st.expander(f"Reference {i + 1}", expanded=False):
+                st.markdown(ref)
+
+if len(st.session_state.messages) > 2:
+    for message in st.session_state.messages[2:]:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+prompt = st.chat_input("Ask a question about the recipe")
+if prompt:
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    st.session_state.messages.append({
+        "role": "user",
+        "content": prompt
+    })
+
+    with st.spinner("Generating response..."):
+        response = completion(
+            model=model,
+            messages=st.session_state.messages,
+            max_tokens=4096,
+            api_key=openai_api_key,
+        )
+        
+    with st.chat_message("assistant"):
+        st.markdown(response["choices"][0]["message"]["content"])
+    
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": response["choices"][0]["message"]["content"]
+    })
