@@ -52,7 +52,7 @@ if clear_btn:
     del st.session_state.messages
     del st.session_state.references
     st.rerun()
-    
+
 if not generate_btn and not hasattr(st.session_state, "messages"):
     st.write("This is a demo of the Materials Synthesis Recipe Recommender. Please enter the desired material properties and click on the 'Recommend' button to get a list of materials synthesis recipes that can be used to synthesize materials with the desired properties.")
     st.stop()
@@ -184,10 +184,12 @@ if prompt:
 
     with st.spinner("Generating response..."):
         if model.startswith("o1") or model.startswith("o3"):
+            model = model.replace("-high", "")
             response = completion(
                 model=model,
                 messages=st.session_state.messages,
                 max_completion_tokens=16384,
+                reasoning_effort="high"
             )
         else:
             response = completion(
