@@ -7,6 +7,17 @@ from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.retrievers import BM25Retriever
 
+DOCUMENT_FORMAT = """--- 
+URL: {url}
+Title: {title} ({year})
+Authors: {author_names}
+Venue: {venue}
+Abstract: {abstract}
+
+{contribution}
+
+{recipe}
+"""
 
 class RetrieverTool(Tool):
     name = "recipe_retriever"
@@ -23,14 +34,15 @@ class RetrieverTool(Tool):
         super().__init__(**kwargs)
         
         if retrieval_split == "all":
-            retrieval_set = load_dataset("iknow-lab/open-materials-guide-0210-embeddings")
+            retrieval_set = load_dataset("iknow-lab/open-materials-guide-2024")
             knowledge_base = concatenate_datasets(retrieval_set.values())
         else:
-            knowledge_base = load_dataset("iknow-lab/open-materials-guide-0210-embeddings", split="train")
+            knowledge_base = load_dataset("iknow-lab/open-materials-guide-2024", split="train")
         self.rag_topk = rag_topk
         
+        author_names = ", ".join([x["name"] for x in knowledge_base["authors"]])
         docs = [
-            Document(page_content="{contribution}\n\n{recipe}".format(**doc), metadata={"id": doc["id"]})
+            Document(page_content=DOCUMENT_FORMAT.format(author_names=author_names, **doc), metadata={"id": doc["id"], "url": doc["url"]})
             for doc in knowledge_base
         ]
 
@@ -56,7 +68,7 @@ class RetrieverTool(Tool):
         )
         return "\nRetrieved documents:\n" + "".join(
             [
-                f"\n\n===== Document {doc.metadata['id'][:10]} =====\n" + doc.page_content
+                doc.page_content
                 for i, doc in enumerate(docs)
             ]
         )
